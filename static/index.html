@@ -1,3 +1,8 @@
+# Sigurohu që direktoria ekziston
+mkdir -p /mnt/user-data/outputs/
+
+# Krijo skedarin index.html
+cat > /mnt/user-data/outputs/index.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="sq">
 <head>
@@ -9,178 +14,78 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #04080f;
-    --panel: #080f1a;
-    --border: #0e2030;
-    --cyan: #00d4ff;
-    --cyan2: #00ffcc;
-    --green: #39ff14;
-    --red: #ff3860;
-    --text: #8bb8cc;
-    --dim: #2a4a5a;
+    --bg: #04080f; --panel: #080f1a; --border: #0e2030;
+    --cyan: #00d4ff; --cyan2: #00ffcc; --green: #39ff14; --red: #ff3860;
+    --text: #8bb8cc; --dim: #2a4a5a;
   }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-  body {
-    background:var(--bg);
-    min-height:100vh;
-    font-family:'Orbitron',monospace;
-    padding: 20px 10px 40px;
-  }
-
-  body::before {
-    content:''; position:fixed; inset:0;
-    background-image:
-      linear-gradient(rgba(0,212,255,.025) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(0,212,255,.025) 1px,transparent 1px);
-    background-size:40px 40px;
-    pointer-events:none; z-index:0;
-  }
-
+  body { background:var(--bg); min-height:100vh; font-family:'Orbitron',monospace; padding:20px 10px 40px; }
+  body::before { content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(0,212,255,.025) 1px,transparent 1px), linear-gradient(90deg,rgba(0,212,255,.025) 1px,transparent 1px);
+    background-size:40px 40px; pointer-events:none; z-index:0; }
   .wrap { position:relative; z-index:1; max-width:520px; margin:0 auto; }
-
-  /* HEADER */
-  .top {
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:20px;
-  }
-  .nav-btn {
-    width:40px; height:40px; border-radius:50%;
-    border:1.5px solid #00d4ff33; background:transparent;
-    color:var(--cyan); font-size:20px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    transition:all .15s; font-family:'Share Tech Mono',monospace;
-  }
+  .top { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .nav-btn { width:40px; height:40px; border-radius:50%; border:1.5px solid #00d4ff33; background:transparent;
+    color:var(--cyan); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all .15s; font-family:'Share Tech Mono',monospace; }
   .nav-btn:active { background:#00d4ff15; border-color:var(--cyan); transform:scale(.88); }
-
   .month-title { text-align:center; flex:1; }
-  .month-name {
-    font-size:clamp(16px,5vw,24px); font-weight:900;
-    letter-spacing:.2em; color:var(--cyan);
-    text-shadow:0 0 10px var(--cyan),0 0 30px #00d4ff33;
-    text-transform:uppercase;
-  }
+  .month-name { font-size:clamp(16px,5vw,24px); font-weight:900; letter-spacing:.2em; color:var(--cyan);
+    text-shadow:0 0 10px var(--cyan),0 0 30px #00d4ff33; text-transform:uppercase; }
   .year-tag { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.3em; color:var(--dim); margin-top:3px; }
-
-  /* CALENDAR BOX */
-  .cal-box {
-    background:var(--panel); border:1px solid var(--border);
-    border-radius:14px; overflow:hidden;
-    box-shadow:0 0 0 1px #00d4ff0a,0 0 40px #00d4ff07,inset 0 1px 0 #00d4ff12;
-    position:relative;
-  }
-
+  .cal-box { background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+    box-shadow:0 0 0 1px #00d4ff0a,0 0 40px #00d4ff07,inset 0 1px 0 #00d4ff12; position:relative; }
   table { width:100%; border-collapse:collapse; }
-
-  thead th {
-    padding:10px 2px 8px;
-    font-size:clamp(7px,2.2vw,10px); font-weight:700;
-    letter-spacing:.1em; text-transform:uppercase;
-    color:var(--dim); border-bottom:1px solid var(--border);
-  }
+  thead th { padding:10px 2px 8px; font-size:clamp(7px,2.2vw,10px); font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--dim); border-bottom:1px solid var(--border); }
   thead th:not(:last-child) { border-right:1px solid var(--border); }
   thead th.wk { color:#ff386055; }
-
-  td {
-    border-right:1px solid var(--border);
-    border-bottom:1px solid var(--border);
-    padding:5px 3px 7px;
-    text-align:center; vertical-align:middle;
-    width:calc(100%/7);
-  }
+  td { border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+    padding:5px 3px 7px; text-align:center; vertical-align:middle; width:calc(100%/7); }
   td:last-child { border-right:none; }
   tr:last-child td { border-bottom:none; }
   td.empty { background:transparent; }
-
   td.today { background:#00d4ff0d; box-shadow:inset 0 0 0 1px #00d4ff44; }
-
-  .day-num {
-    font-family:'Share Tech Mono',monospace;
-    font-size:clamp(9px,2.5vw,12px); color:var(--text);
-    display:block; margin-bottom:4px; line-height:1;
-  }
+  .day-num { font-family:'Share Tech Mono',monospace; font-size:clamp(9px,2.5vw,12px); color:var(--text);
+    display:block; margin-bottom:4px; line-height:1; }
   td.today .day-num { color:var(--cyan); text-shadow:0 0 6px var(--cyan); font-weight:700; }
   td.weekend .day-num { color:#ff386077; }
-
-  /* Status indicator */
-  .status {
-    font-size:clamp(16px,5vw,22px);
-    display:block; line-height:1;
-    margin-bottom:4px;
-    transition: all .2s;
-  }
-  .status.worked  { filter: drop-shadow(0 0 4px #39ff14); }
-  .status.missed  { filter: drop-shadow(0 0 4px #ff3860); }
+  .status { font-size:clamp(16px,5vw,22px); display:block; line-height:1; margin-bottom:4px; transition:all .2s; }
+  .status.worked { filter:drop-shadow(0 0 4px #39ff14); }
+  .status.missed { filter:drop-shadow(0 0 4px #ff3860); }
   .status.empty-s { opacity:.12; }
-
-  /* +/- buttons */
   .btns { display:flex; gap:3px; justify-content:center; }
-  .b {
-    width:clamp(20px,5.5vw,26px); height:clamp(20px,5.5vw,26px);
-    border-radius:50%; border:1.5px solid;
-    background:transparent; cursor:pointer;
-    font-size:clamp(12px,3.5vw,15px); font-weight:900;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Share Tech Mono',monospace;
-    transition:all .12s; line-height:1;
-  }
+  .b { width:clamp(20px,5.5vw,26px); height:clamp(20px,5.5vw,26px); border-radius:50%; border:1.5px solid;
+    background:transparent; cursor:pointer; font-size:clamp(12px,3.5vw,15px); font-weight:900;
+    display:flex; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace;
+    transition:all .12s; line-height:1; }
   .b:active { transform:scale(.8); }
   .bp { color:#00ffcc55; border-color:#00ffcc22; }
   .bp:active { color:var(--green); border-color:var(--green); background:#39ff1415; box-shadow:0 0 8px #39ff1455; }
   .bm { color:#2a4050; border-color:#1a2a35; }
   .bm:active { color:var(--red); border-color:var(--red); background:#ff386015; box-shadow:0 0 8px #ff386055; }
-
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.3)} 100%{transform:scale(1)} }
   .status.pop { animation:pop .2s ease-out; }
-
-  /* LEGEND */
-  .legend {
-    display:flex; gap:12px; justify-content:center;
-    margin: 14px 0 0;
-    font-family:'Share Tech Mono',monospace;
-    font-size:10px; letter-spacing:.15em; color:var(--dim);
-  }
+  .legend { display:flex; gap:12px; justify-content:center; margin:14px 0 0;
+    font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.15em; color:var(--dim); }
   .leg-item { display:flex; align-items:center; gap:5px; }
-  .leg-dot { font-size:14px; }
-
-  /* FOOTER */
-  .footer {
-    display:flex; align-items:center; justify-content:space-between;
-    margin-top:16px; padding:12px 16px;
-    background:var(--panel); border:1px solid var(--border);
-    border-radius:10px;
-  }
+  .footer { display:flex; align-items:center; justify-content:space-between; margin-top:16px; padding:12px 16px;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; }
   .f-wrap { display:flex; flex-direction:column; gap:2px; }
   .f-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.2em; color:var(--dim); text-transform:uppercase; }
   .f-val { font-family:'Share Tech Mono',monospace; font-size:20px; }
   .f-worked { color:var(--green); text-shadow:0 0 8px var(--green); }
-  .f-missed  { color:var(--red);  text-shadow:0 0 8px var(--red); }
-
-  .test-btn {
-    font-family:'Orbitron',monospace; font-size:8px; letter-spacing:.15em;
-    text-transform:uppercase; color:var(--dim);
-    border:1px solid var(--border); background:transparent;
-    padding:8px 11px; border-radius:6px; cursor:pointer; transition:all .2s;
-  }
-  .test-btn:active { color:var(--cyan); border-color:var(--cyan); box-shadow:0 0 8px #00d4ff44; }
-
-  /* Toast */
-  .toast {
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
-    background:#080f1a; border:1px solid var(--cyan);
-    color:var(--cyan); font-family:'Share Tech Mono',monospace;
-    font-size:12px; letter-spacing:.15em;
-    padding:10px 20px; border-radius:8px;
-    box-shadow:0 0 20px #00d4ff44;
-    transition:transform .3s ease;
-    white-space:nowrap; z-index:99;
-  }
+  .f-missed { color:var(--red); text-shadow:0 0 8px var(--red); }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:#080f1a; border:1px solid var(--cyan); color:var(--cyan);
+    font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:.15em;
+    padding:10px 20px; border-radius:8px; box-shadow:0 0 20px #00d4ff44;
+    transition:transform .3s ease; white-space:nowrap; z-index:99; }
   .toast.show { transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="top">
     <button class="nav-btn" id="prevBtn">&#8249;</button>
     <div class="month-title">
@@ -189,7 +94,6 @@
     </div>
     <button class="nav-btn" id="nextBtn">&#8250;</button>
   </div>
-
   <div class="cal-box">
     <table>
       <thead>
@@ -202,13 +106,11 @@
       <tbody id="calBody"></tbody>
     </table>
   </div>
-
   <div class="legend">
-    <div class="leg-item"><span class="leg-dot">✅</span> Ka punuar</div>
-    <div class="leg-item"><span class="leg-dot">❌</span> Nuk ka punuar</div>
-    <div class="leg-item"><span class="leg-dot">⬜</span> Pa shënuar</div>
+    <div class="leg-item"><span>✅</span> Ka punuar</div>
+    <div class="leg-item"><span>❌</span> Nuk ka punuar</div>
+    <div class="leg-item"><span>⬜</span> Pa shënuar</div>
   </div>
-
   <div class="footer">
     <div style="display:flex;gap:20px;">
       <div class="f-wrap">
@@ -220,92 +122,90 @@
         <span class="f-val f-missed" id="fMissed">00</span>
       </div>
     </div>
-    <button class="test-btn" onclick="sendTest()">📧 Test Email</button>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyhc-tSAOqK99ttbmv5j7RWM_AwDQEkYmOVwaOKdkBMUaUmqEHrX26kV0mzGqvZtaygA/exec";
 const MONTHS = ['Janar','Shkurt','Mars','Prill','Maj','Qershor','Korrik','Gusht','Shtator','Tetor','Nëntor','Dhjetor'];
 const now = new Date();
 let vY = now.getFullYear(), vM = now.getMonth();
 let store = {};
 
+// Load data from Google Script
 async function loadData() {
   try {
-    const r = await fetch('/api/data');
-    store = await r.json();
-  } catch(e) { store = {}; }
+    const r = await fetch(SCRIPT_URL + "?action=getall");
+    const d = await r.json();
+    store = d || {};
+  } catch(e) {
+    // fallback to localStorage
+    store = JSON.parse(localStorage.getItem('kal') || '{}');
+  }
   render();
 }
 
 async function setDay(k, v) {
-  // toggle: if same value clicked again → clear
-  if (store[k] === v) {
-    store[k] = undefined;
-    delete store[k];
-    await fetch('/api/set', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({date:k,value:0}) });
-  } else {
-    store[k] = v;
-    await fetch('/api/set', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({date:k,value:v}) });
-  }
+  if (store[k] === v) { store[k] = undefined; delete store[k]; v = "clear"; }
+  else store[k] = v;
+  
+  // Save to localStorage as backup
+  localStorage.setItem('kal', JSON.stringify(store));
+  
+  // Save to Google Script
+  try {
+    await fetch(SCRIPT_URL + "?action=set&d=" + k + "&v=" + (v === "clear" ? "clear" : v), {mode:'no-cors'});
+  } catch(e) {}
+  
   updateCell(k);
   updateFooter();
 }
 
-function keyFor(y,m,d) { return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function keyFor(y,m,d) { return y+"-"+String(m+1).padStart(2,'0')+"-"+String(d).padStart(2,'0'); }
 
 function statusEmoji(v) {
-  if (v === 1)  return {e:'✅', cls:'worked'};
-  if (v === -1) return {e:'❌', cls:'missed'};
-  return {e:'⬜', cls:'empty-s'};
+  if (v==="po") return {e:'✅',cls:'worked'};
+  if (v==="jo") return {e:'❌',cls:'missed'};
+  return {e:'⬜',cls:'empty-s'};
 }
 
 function updateCell(k) {
   const el = document.getElementById('s_'+k);
   if (!el) return;
-  const {e, cls} = statusEmoji(store[k]);
-  el.textContent = e;
-  el.className = 'status ' + cls;
+  const {e,cls} = statusEmoji(store[k]);
+  el.textContent = e; el.className = 'status '+cls;
   el.classList.add('pop');
-  setTimeout(()=>el.classList.remove('pop'), 220);
+  setTimeout(()=>el.classList.remove('pop'),220);
 }
 
 function render() {
   document.getElementById('monthName').textContent = MONTHS[vM];
-  document.getElementById('yearTag').textContent = `◈ ${vY} ◈`;
-
+  document.getElementById('yearTag').textContent = '◈ '+vY+' ◈';
   const tbody = document.getElementById('calBody');
   tbody.innerHTML = '';
-
-  const firstDay = new Date(vY, vM, 1).getDay();
-  const offset = firstDay === 0 ? 6 : firstDay - 1;
-  const dim = new Date(vY, vM+1, 0).getDate();
-  const todayStr = keyFor(now.getFullYear(), now.getMonth(), now.getDate());
-  const rows = Math.ceil((offset + dim) / 7);
-
-  let day = 1;
-  for (let r = 0; r < rows; r++) {
-    const tr = document.createElement('tr');
-    for (let c = 0; c < 7; c++) {
-      const td = document.createElement('td');
-      const idx = r*7+c;
-      if (idx < offset || day > dim) {
-        td.className = 'empty'; td.innerHTML = '&nbsp;';
-      } else {
-        const d = day;
-        const k = keyFor(vY, vM, d);
-        const isToday = k === todayStr;
-        const isWeekend = c >= 5;
-        const {e, cls} = statusEmoji(store[k]);
-        td.className = (isToday?' today':'') + (isWeekend?' weekend':'');
-        td.innerHTML = `
-          <span class="day-num">${d}</span>
+  const firstDay = new Date(vY,vM,1).getDay();
+  const offset = firstDay===0?6:firstDay-1;
+  const dim = new Date(vY,vM+1,0).getDate();
+  const todayStr = keyFor(now.getFullYear(),now.getMonth(),now.getDate());
+  const rows = Math.ceil((offset+dim)/7);
+  let day=1;
+  for(let r=0;r<rows;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<7;c++){
+      const td=document.createElement('td');
+      const idx=r*7+c;
+      if(idx<offset||day>dim){ td.className='empty'; td.innerHTML='&nbsp;'; }
+      else {
+        const d=day, k=keyFor(vY,vM,d);
+        const isToday=k===todayStr, isWeekend=c>=5;
+        const {e,cls}=statusEmoji(store[k]);
+        td.className=(isToday?' today':'')+(isWeekend?' weekend':'');
+        td.innerHTML=`<span class="day-num">${d}</span>
           <span class="status ${cls}" id="s_${k}">${e}</span>
           <div class="btns">
-            <button class="b bp" onclick="setDay('${k}',1)" title="Ka punuar">+</button>
-            <button class="b bm" onclick="setDay('${k}',-1)" title="Nuk ka punuar">−</button>
+            <button class="b bp" onclick="setDay('${k}','po')">+</button>
+            <button class="b bm" onclick="setDay('${k}','jo')">−</button>
           </div>`;
         day++;
       }
@@ -317,39 +217,35 @@ function render() {
 }
 
 function updateFooter() {
-  const prefix = `${vY}-${String(vM+1).padStart(2,'0')}-`;
-  let w=0, m=0;
-  for (const k in store) {
-    if (k.startsWith(prefix)) {
-      if (store[k]===1) w++;
-      else if (store[k]===-1) m++;
-    }
-  }
-  document.getElementById('fWorked').textContent = String(w).padStart(2,'0');
-  document.getElementById('fMissed').textContent = String(m).padStart(2,'0');
+  const prefix=vY+"-"+String(vM+1).padStart(2,'0')+"-";
+  let w=0,m=0;
+  for(const k in store){ if(k.startsWith(prefix)){ if(store[k]==="po")w++; else if(store[k]==="jo")m++; } }
+  document.getElementById('fWorked').textContent=String(w).padStart(2,'0');
+  document.getElementById('fMissed').textContent=String(m).padStart(2,'0');
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-async function sendTest() {
-  showToast('▸ Duke dërguar email...');
-  try {
-    await fetch('/api/send-test', {method:'POST'});
-    showToast('✅ Email u dërgua te orinesa24@gmail.com');
-  } catch(e) {
-    showToast('❌ Gabim gjatë dërgimit');
-  }
-}
+document.getElementById('prevBtn').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}render();};
+document.getElementById('nextBtn').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
 
-document.getElementById('prevBtn').onclick = () => { vM--; if(vM<0){vM=11;vY--;} render(); };
-document.getElementById('nextBtn').onclick = () => { vM++; if(vM>11){vM=0;vY++;} render(); };
+// Check URL params (from email PO/JO click)
+const params = new URLSearchParams(window.location.search);
+if(params.get('v') && params.get('d')) {
+  const v=params.get('v'), d=params.get('d');
+  store[d]=v;
+  localStorage.setItem('kal',JSON.stringify(store));
+  showToast(v==='po'?'✅ PO - Babi ka punuar!':'❌ JO - Babi nuk ka punuar.');
+}
 
 loadData();
 </script>
 </body>
 </html>
+ENDOFFILE
+
+echo "Skedari është krijuar me sukses në: /mnt/user-data/outputs/index.html"
