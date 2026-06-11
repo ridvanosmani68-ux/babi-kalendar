@@ -232,7 +232,7 @@ document.getElementById('nextBtn').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render
 const params = new URLSearchParams(window.location.search);
 if(params.get('v') && params.get('d')) {
   const v=params.get('v'), d=params.get('d');
-  store[d]=v;
+  store[d]=v; render();
   localStorage.setItem('kal',JSON.stringify(store));
   showToast(v==='po'?'✅ PO - Babi ka punuar!':'❌ JO - Babi nuk ka punuar.');
 }
