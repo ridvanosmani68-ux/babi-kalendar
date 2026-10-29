@@ -10,7 +10,7 @@
 <style>
   :root {
     --bg:#04080f;--panel:#080f1a;--border:#0e2030;
-    --cyan:#00d4ff;--cyan2:#00ffcc;--green:#39ff14;--red:#ff3860;
+    --cyan:#00d4ff;--cyan2:#00ffcc;--green:#39ff14;--yellow:#ffcc00;--red:#ff3860;
     --text:#8bb8cc;--dim:#2a4a5a;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -36,7 +36,7 @@
   thead th:not(:last-child){border-right:1px solid var(--border);}
   thead th.wk{color:#ff386055;}
   td{border-right:1px solid var(--border);border-bottom:1px solid var(--border);
-    padding:5px 3px 7px;text-align:center;vertical-align:middle;width:calc(100%/7);}
+    padding:5px 2px 7px;text-align:center;vertical-align:middle;width:calc(100%/7);}
   td:last-child{border-right:none;}
   tr:last-child td{border-bottom:none;}
   td.empty{background:transparent;}
@@ -45,31 +45,35 @@
     display:block;margin-bottom:4px;line-height:1;}
   td.today .day-num{color:var(--cyan);text-shadow:0 0 6px var(--cyan);font-weight:700;}
   td.weekend .day-num{color:#ff386077;}
-  .status{font-size:clamp(16px,5vw,22px);display:block;line-height:1;margin-bottom:4px;transition:all .2s;}
-  .status.worked{filter:drop-shadow(0 0 4px #39ff14);}
-  .status.missed{filter:drop-shadow(0 0 4px #ff3860);}
+  .status{font-size:clamp(14px,4.5vw,20px);display:block;line-height:1;margin-bottom:4px;transition:all .2s;}
+  .status.worked{filter:drop-shadow(0 0 4px var(--green));}
+  .status.half-s{color:var(--yellow);filter:drop-shadow(0 0 4px var(--yellow));}
+  .status.missed{filter:drop-shadow(0 0 4px var(--red));}
   .status.empty-s{opacity:.12;}
-  .btns{display:flex;gap:3px;justify-content:center;}
-  .b{width:clamp(20px,5.5vw,26px);height:clamp(20px,5.5vw,26px);border-radius:50%;border:1.5px solid;
-    background:transparent;cursor:pointer;font-size:clamp(12px,3.5vw,15px);font-weight:900;
+  .btns{display:flex;gap:2px;justify-content:center;}
+  .b{width:clamp(18px,4.8vw,23px);height:clamp(18px,4.8vw,23px);border-radius:50%;border:1.5px solid;
+    background:transparent;cursor:pointer;font-size:clamp(10px,3vw,13px);font-weight:900;
     display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;
     transition:all .12s;line-height:1;}
   .b:active{transform:scale(.8);}
-  .bp{color:#00ffcc55;border-color:#00ffcc22;}
+  .bp{color:#39ff1488;border-color:#39ff1444;}
   .bp:active{color:var(--green);border-color:var(--green);background:#39ff1415;}
-  .bm{color:#2a4050;border-color:#1a2a35;}
+  .bh{color:#ffcc0088;border-color:#ffcc0044;}
+  .bh:active{color:var(--yellow);border-color:var(--yellow);background:#ffcc0015;}
+  .bm{color:#ff386088;border-color:#ff386044;}
   .bm:active{color:var(--red);border-color:var(--red);background:#ff386015;}
   @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
   .status.pop{animation:pop .2s ease-out;}
-  .legend{display:flex;gap:12px;justify-content:center;margin:14px 0 0;
-    font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--dim);}
-  .leg-item{display:flex;align-items:center;gap:5px;}
-  .footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:12px 16px;
+  .legend{display:flex;gap:8px;justify-content:center;margin:14px 0 0;
+    font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--dim);flex-wrap:wrap;}
+  .leg-item{display:flex;align-items:center;gap:4px;}
+  .footer{display:flex;align-items:center;justify-content:space-around;margin-top:16px;padding:12px 10px;
     background:var(--panel);border:1px solid var(--border);border-radius:10px;}
-  .f-wrap{display:flex;flex-direction:column;gap:2px;}
-  .f-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;}
-  .f-val{font-family:'Share Tech Mono',monospace;font-size:20px;}
+  .f-wrap{display:flex;flex-direction:column;gap:2px;align-items:center;}
+  .f-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;}
+  .f-val{font-family:'Share Tech Mono',monospace;font-size:18px;}
   .f-worked{color:var(--green);text-shadow:0 0 8px var(--green);}
+  .f-half{color:var(--yellow);text-shadow:0 0 8px var(--yellow);}
   .f-missed{color:var(--red);text-shadow:0 0 8px var(--red);}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
     background:#080f1a;border:1px solid var(--cyan);color:var(--cyan);
@@ -102,20 +106,23 @@
     </table>
   </div>
   <div class="legend">
-    <div class="leg-item"><span>✅</span> Ka punuar</div>
-    <div class="leg-item"><span>❌</span> Nuk ka punuar</div>
+    <div class="leg-item"><span>✅</span> Po</div>
+    <div class="leg-item"><span>½</span> Gjysmë</div>
+    <div class="leg-item"><span>❌</span> Jo</div>
     <div class="leg-item"><span>⬜</span> Pa shënuar</div>
   </div>
   <div class="footer">
-    <div style="display:flex;gap:20px;">
-      <div class="f-wrap">
-        <span class="f-label">✅ Ditë pune</span>
-        <span class="f-val f-worked" id="fWorked">00</span>
-      </div>
-      <div class="f-wrap">
-        <span class="f-label">❌ Ditë jo</span>
-        <span class="f-val f-missed" id="fMissed">00</span>
-      </div>
+    <div class="f-wrap">
+      <span class="f-label">✅ Puna</span>
+      <span class="f-val f-worked" id="fWorked">00</span>
+    </div>
+    <div class="f-wrap">
+      <span class="f-label">½ Gjysmë</span>
+      <span class="f-val f-half" id="fHalf">00</span>
+    </div>
+    <div class="f-wrap">
+      <span class="f-label">❌ Jo</span>
+      <span class="f-val f-missed" id="fMissed">00</span>
     </div>
   </div>
 </div>
@@ -127,11 +134,15 @@ const now=new Date();
 let vY=now.getFullYear(), vM=now.getMonth();
 let store=JSON.parse(localStorage.getItem('kal')||'{}');
 
-// Check URL params FIRST before anything else
+// Check URL params for email click (supports both date/val and d/v)
 const params=new URLSearchParams(window.location.search);
-const pv=params.get('v'), pd=params.get('d');
-if(pv && pd){
-  store[pd]=pv;
+const pd=params.get('d')||params.get('date');
+const pv=params.get('v')||params.get('val');
+
+if(pd && pv!==null){
+  if(pv==='1'||pv==='po') store[pd]='po';
+  else if(pv==='0.5'||pv==='half') store[pd]='half';
+  else if(pv==='0'||pv==='jo') store[pd]='jo';
   localStorage.setItem('kal',JSON.stringify(store));
 }
 
@@ -139,6 +150,7 @@ function keyFor(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).pa
 
 function statusEmoji(v){
   if(v==='po') return {e:'✅',cls:'worked'};
+  if(v==='half') return {e:'½',cls:'half-s'};
   if(v==='jo') return {e:'❌',cls:'missed'};
   return {e:'⬜',cls:'empty-s'};
 }
@@ -182,7 +194,7 @@ function render(){
         const isToday=k===todayStr,isWeekend=c>=5;
         const {e,cls}=statusEmoji(store[k]);
         td.className=(isToday?' today':'')+(isWeekend?' weekend':'');
-        td.innerHTML='<span class="day-num">'+d+'</span><span class="status '+cls+'" id="s_'+k+'">'+e+'</span><div class="btns"><button class="b bp" onclick="setDay(\''+k+'\',\'po\')">+</button><button class="b bm" onclick="setDay(\''+k+'\',\'jo\')">−</button></div>';
+        td.innerHTML='<span class="day-num">'+d+'</span><span class="status '+cls+'" id="s_'+k+'">'+e+'</span><div class="btns"><button class="b bp" onclick="setDay(\''+k+'\',\'po\')">+</button><button class="b bh" onclick="setDay(\''+k+'\',\'half\')">½</button><button class="b bm" onclick="setDay(\''+k+'\',\'jo\')">−</button></div>';
         day++;
       }
       tr.appendChild(td);
@@ -190,18 +202,27 @@ function render(){
     tbody.appendChild(tr);
   }
   updateFooter();
-  // Show toast if came from email
-  if(pv && pd){
-    const msg=pv==='po'?'✅ PO - Babi ka punuar!':'❌ JO - Babi nuk ka punuar.';
+  
+  if(pd && pv!==null){
+    let msg='✅ PO - Babi ka punuar!';
+    if(pv==='0.5'||pv==='half') msg='½ - Babi ka punuar gjysmë dite!';
+    else if(pv==='0'||pv==='jo') msg='❌ JO - Babi nuk ka punuar.';
     showToast(msg);
   }
 }
 
 function updateFooter(){
   const prefix=vY+'-'+String(vM+1).padStart(2,'0')+'-';
-  let w=0,m=0;
-  for(const k in store){if(k.startsWith(prefix)){if(store[k]==='po')w++;else if(store[k]==='jo')m++;}}
+  let w=0,h=0,m=0;
+  for(const k in store){
+    if(k.startsWith(prefix)){
+      if(store[k]==='po') w++;
+      else if(store[k]==='half') h++;
+      else if(store[k]==='jo') m++;
+    }
+  }
   document.getElementById('fWorked').textContent=String(w).padStart(2,'0');
+  document.getElementById('fHalf').textContent=String(h).padStart(2,'0');
   document.getElementById('fMissed').textContent=String(m).padStart(2,'0');
 }
 
@@ -214,7 +235,6 @@ function showToast(msg){
 document.getElementById('prevBtn').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}render();};
 document.getElementById('nextBtn').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
 
-// If came from email with a date in different month, navigate to that month
 if(pd){
   const parts=pd.split('-');
   vY=parseInt(parts[0]);
